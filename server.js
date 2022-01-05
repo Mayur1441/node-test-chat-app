@@ -33,6 +33,7 @@ GroupName.forEach(function (singleGroup) {
             console.log(err)
         } else {
             if (!docs) {
+                console.log('No groups')
                 let grp = new Group(singleGroup);
                 grp.save();
             }
@@ -56,12 +57,18 @@ app.get('/messagesGroup/:group', (req, res) => {
 app.post('/messages', async (req, res) => {
     try {
         let message = new Message(req.body);
+        message.name = message.name.toUpperCase();
+        console.log('msg', message);
 
-        let savedMessage = await message.save()
+        if(message.group == '') {
+            message.group = message.name;
+        }
+
+        await message.save()
 
         let censored = await Message.findOne({message: 'badword'});
         if (censored)
-            await Message.remove({_id: censored.id})
+            await Message.deleteOne({_id: censored.id})
         else
             io.emit('message', req.body);
         res.sendStatus(200);
