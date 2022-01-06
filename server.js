@@ -60,7 +60,7 @@ app.post('/messages', async (req, res) => {
         message.name = message.name.toUpperCase();
         console.log('msg', message);
 
-        if(message.group == '') {
+        if (message.group == '') {
             message.group = message.name;
         }
 

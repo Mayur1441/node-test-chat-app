@@ -18,7 +18,7 @@ function addMessages(message) {
 function getMessages() {
     $("#messages").empty();
     $.get('http://localhost:3000/groups', (groupsData) => {
-        console.log('', $('#group > option').length )
+        console.log('', $('#group > option').length)
         if ($('#group > option').length <= 1) {
             groupsData.forEach(function (singleGroup) {
 
@@ -51,7 +51,7 @@ function sendMessage(message) {
 function setMessages() {
     var groupName = $('#name').val().toString().trim().toUpperCase();
     var userName = $('#group').find(":selected").val();
-    if(groupName.length && userName) {
+    if (groupName.length && userName) {
         $.get('http://localhost:3000/messagesGroup/' + groupName, (singleGroupMsgData) => {
             $("#messages").empty();
             if (singleGroupMsgData.length > 0) {
