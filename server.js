@@ -1,3 +1,4 @@
+require("dotenv").config();
 let express = require('express');
 let bodyParser = require('body-parser')
 let app = express();
@@ -7,8 +8,9 @@ io.on('connection', () => {
     console.log('a user is connected')
 })
 let mongoose = require('mongoose');
-let dbUrl = 'mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false'
+let dbUrl = process.env.MongoDBUrl;
 mongoose.connect(dbUrl, {}, (err) => {
+    console.log('dbUrl', dbUrl);
     console.log('mongodb connected', err);
 })
 app.use(express.static(__dirname));
@@ -33,9 +35,9 @@ GroupName.forEach(function (singleGroup) {
             console.log(err)
         } else {
             if (!docs) {
-                console.log('No groups')
                 let grp = new Group(singleGroup);
                 grp.save();
+                console.log('Group created ' + singleGroup.name);
             }
         }
     });
@@ -80,6 +82,6 @@ app.post('/messages', async (req, res) => {
     }
 });
 
-let server = http.listen(3000, () => {
+let server = http.listen(process.env.APP_PORT, () => {
     console.log('server is running on port', server.address().port);
 });

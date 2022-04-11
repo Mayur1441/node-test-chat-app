@@ -1,4 +1,6 @@
+require("dotenv").config();
 var socket = io();
+
 $(() => {
     $("#send").click(() => {
         if ($('#name').val().toString().length > 0 && $('#message').val().toString().length > 0) {
@@ -12,12 +14,12 @@ socket.on('message', getMessages);
 
 function addMessages(message) {
     console.log('message', message);
-    $("#" + message.group).append(`<p> ${message.name} == ${message.message} </p>`);
+    $("#" + message.group).append(`<p><b> ${message.name} :-</b> ${message.message} </p>`);
 }
 
 function getMessages() {
     $("#messages").empty();
-    $.get('http://localhost:3000/groups', (groupsData) => {
+    $.get(process.env.API_LINK + '/groups', (groupsData) => {
         console.log('', $('#group > option').length)
         if ($('#group > option').length <= 1) {
             groupsData.forEach(function (singleGroup) {
@@ -28,8 +30,9 @@ function getMessages() {
         }
         var groupName = $('#group').find(":selected").val();
         if (groupName.toString().length > 0) {
-            $.get('http://localhost:3000/messagesGroup/' + groupName, (singleGroupMsgData) => {
+            $.get(process.env.API_LINK + '/messagesGroup/' + groupName, (singleGroupMsgData) => {
                 if (singleGroupMsgData.length > 0) {
+                    $("#messages").empty();
                     $("#messages").append(`<div id="${groupName}"><u><h2>${groupName} Group</h2></u><br>`);
                     singleGroupMsgData.forEach(addMessages);
                     $("#messages").append(`</div>`);
@@ -44,7 +47,7 @@ function getMessages() {
 }
 
 function sendMessage(message) {
-    $.post('http://localhost:3000/messages', message);
+    $.post(process.env.API_LINK + '/messages', message);
     setMessages();
 }
 
@@ -52,7 +55,7 @@ function setMessages() {
     var groupName = $('#name').val().toString().trim().toUpperCase();
     var userName = $('#group').find(":selected").val();
     if (groupName.length && userName) {
-        $.get('http://localhost:3000/messagesGroup/' + groupName, (singleGroupMsgData) => {
+        $.get(process.env.API_LINK + '/messagesGroup/' + groupName, (singleGroupMsgData) => {
             $("#messages").empty();
             if (singleGroupMsgData.length > 0) {
                 $("#messages").append(`<div id="${groupName}"><u><h2>${groupName}</h2></u><br>`);
